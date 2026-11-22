@@ -21,15 +21,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final DeviceAuthenticationFilter deviceAuthenticationFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
 
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
+            DeviceAuthenticationFilter deviceAuthenticationFilter,
             CustomAuthenticationEntryPoint authenticationEntryPoint,
             CustomAccessDeniedHandler accessDeniedHandler
     ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.deviceAuthenticationFilter = deviceAuthenticationFilter;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
     }
@@ -44,7 +47,6 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Frontend estático e recursos públicos
                         .requestMatchers(
                                 "/",
                                 "/index.html",
@@ -55,22 +57,20 @@ public class SecurityConfig {
                                 "/error"
                         ).permitAll()
 
-                        // Endpoints de autenticação pública
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
-                        // Demonstração e testes de perfis (RBAC)
                         .requestMatchers("/api/test/coordinator").hasAnyRole("COORDENADOR", "SUPERVISOR")
                         .requestMatchers("/api/test/guardian").hasRole("RESPONSAVEL")
                         .requestMatchers("/api/test/student").hasRole("ALUNO")
 
-                        // Endpoints administrativos e protegidos
+                        .requestMatchers("/api/devices/**").hasRole("DEVICE")
                         .requestMatchers("/api/admin/**").hasAnyRole("COORDENADOR", "SUPERVISOR")
                         .requestMatchers("/api/guardian/**").hasRole("RESPONSAVEL")
                         .requestMatchers("/api/student/**").hasRole("ALUNO")
 
-                        // Qualquer outra rota requer autenticação
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(deviceAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
