@@ -60,6 +60,13 @@ public class AccessControlService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<AccessEventResponse> listRecentAccessLogs() {
+        return accessLogRepository.findTop50ByOrderByRecordedAtDesc().stream()
+                .map(AccessEventResponse::fromEntity)
+                .toList();
+    }
+
     @Transactional
     public DeviceResponse updateDeviceStatus(Long deviceId, boolean active) {
         Device device = deviceRepository.findById(deviceId)

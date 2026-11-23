@@ -1,5 +1,5 @@
-// ========================================================================
-// UTILS — funções auxiliares globais
+﻿// ========================================================================
+// UTILS â€” funÃ§Ãµes auxiliares globais
 // ========================================================================
 
 function fillCredentials(email, password) {
@@ -105,7 +105,7 @@ if (loginForm) {
             }, 500);
 
         } catch (err) {
-            showAlert('Não foi possível conectar ao servidor. Verifique sua conexão.', 'danger');
+            showAlert('NÃ£o foi possÃ­vel conectar ao servidor. Verifique sua conexÃ£o.', 'danger');
         } finally {
             btn.disabled = false;
             btn.textContent = 'Entrar no Sistema';
@@ -114,7 +114,7 @@ if (loginForm) {
 }
 
 // ========================================================================
-// DASHBOARD — inicialização e RBAC
+// DASHBOARD â€” inicializaÃ§Ã£o e RBAC
 // ========================================================================
 
 function initDashboard() {
@@ -136,7 +136,7 @@ function initDashboard() {
         const roleLabels = {
             COORDENADOR: 'Coordenador',
             SUPERVISOR: 'Supervisor',
-            RESPONSAVEL: 'Responsável',
+            RESPONSAVEL: 'ResponsÃ¡vel',
             ALUNO: 'Aluno'
         };
 
@@ -144,13 +144,13 @@ function initDashboard() {
 
         if (userDisplay) userDisplay.textContent = user.name;
         if (roleBadge) roleBadge.textContent = displayRole;
-        if (welcomeTitle) welcomeTitle.textContent = `Olá, ${user.name}`;
+        if (welcomeTitle) welcomeTitle.textContent = `OlÃ¡, ${user.name}`;
 
         const roleDescriptions = {
-            COORDENADOR: 'Perfil: Coordenador - Acesso completo à gestão escolar, matrículas e controle de acessos.',
-            SUPERVISOR: 'Perfil: Supervisor - Monitoramento de entradas/saídas e operação de autorizações.',
-            RESPONSAVEL: 'Perfil: Responsável Familiar - Acompanhamento das informações dos alunos vinculados.',
-            ALUNO: 'Perfil: Aluno - Consulta básica de histórico e comunicados escolares.'
+            COORDENADOR: 'Perfil: Coordenador - Acesso completo Ã  gestÃ£o escolar, matrÃ­culas e controle de acessos.',
+            SUPERVISOR: 'Perfil: Supervisor - Monitoramento de entradas/saÃ­das e operaÃ§Ã£o de autorizaÃ§Ãµes.',
+            RESPONSAVEL: 'Perfil: ResponsÃ¡vel Familiar - Acompanhamento das informaÃ§Ãµes dos alunos vinculados.',
+            ALUNO: 'Perfil: Aluno - Consulta bÃ¡sica de histÃ³rico e comunicados escolares.'
         };
 
         if (roleDesc && roleDescriptions[user.role]) {
@@ -160,7 +160,7 @@ function initDashboard() {
         if (user.role === 'COORDENADOR' || user.role === 'SUPERVISOR') {
             showSection('admin-students-section');
             showSection('admin-pickups-section');
-            showSection('admin-early-exits-section');
+            showSection('admin-early-exits-section'); showSection('admin-access-control-section'); loadDevices(); loadAccessLogs(); setInterval(loadAccessLogs, 5000);
             loadStudents();
             populateStudentSelects();
             loadEarlyExits();
@@ -180,7 +180,7 @@ function showSection(id) {
 }
 
 // ========================================================================
-// ALUNOS — Fase 2 (mantido integralmente)
+// ALUNOS â€” Fase 2 (mantido integralmente)
 // ========================================================================
 
 let searchTimer;
@@ -257,7 +257,7 @@ async function loadStudents() {
         }).join('');
 
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="9" class="text-center" style="color:var(--danger)">Erro na conexão com o servidor.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center" style="color:var(--danger)">Erro na conexÃ£o com o servidor.</td></tr>`;
     }
 }
 
@@ -304,7 +304,7 @@ async function saveStudent(event) {
         populateStudentSelects();
 
     } catch (err) {
-        showBanner('Erro na comunicação com o servidor.', 'danger');
+        showBanner('Erro na comunicaÃ§Ã£o com o servidor.', 'danger');
     }
 }
 
@@ -323,7 +323,7 @@ async function toggleStudentStatus(studentId, newStatus) {
 
         const data = await response.json();
         if (!response.ok) {
-            showBanner(data.message || 'Erro ao alterar situação do cadastro.', 'danger');
+            showBanner(data.message || 'Erro ao alterar situaÃ§Ã£o do cadastro.', 'danger');
             return;
         }
 
@@ -331,7 +331,7 @@ async function toggleStudentStatus(studentId, newStatus) {
         loadStudents();
 
     } catch (err) {
-        showBanner('Erro na comunicação com o servidor.', 'danger');
+        showBanner('Erro na comunicaÃ§Ã£o com o servidor.', 'danger');
     }
 }
 
@@ -362,21 +362,21 @@ async function submitLinkGuardian(event) {
 
         const data = await response.json();
         if (!response.ok) {
-            showBanner(data.message || 'Erro ao vincular responsável.', 'danger');
+            showBanner(data.message || 'Erro ao vincular responsÃ¡vel.', 'danger');
             return;
         }
 
-        showBanner('Responsável vinculado com sucesso ao aluno!', 'success');
+        showBanner('ResponsÃ¡vel vinculado com sucesso ao aluno!', 'success');
         closeModal();
         loadStudents();
 
     } catch (err) {
-        showBanner('Erro na comunicação com o servidor.', 'danger');
+        showBanner('Erro na comunicaÃ§Ã£o com o servidor.', 'danger');
     }
 }
 
 async function unlinkGuardian(studentId, guardianUserId) {
-    if (!confirm('Deseja realmente desvincular este responsável do aluno?')) return;
+    if (!confirm('Deseja realmente desvincular este responsÃ¡vel do aluno?')) return;
 
     try {
         const response = await fetch(`/api/admin/students/${studentId}/guardians/${guardianUserId}`, {
@@ -386,20 +386,20 @@ async function unlinkGuardian(studentId, guardianUserId) {
 
         const data = await response.json();
         if (!response.ok) {
-            showBanner(data.message || 'Erro ao desvincular responsável.', 'danger');
+            showBanner(data.message || 'Erro ao desvincular responsÃ¡vel.', 'danger');
             return;
         }
 
-        showBanner('Vínculo removido com sucesso.', 'success');
+        showBanner('VÃ­nculo removido com sucesso.', 'success');
         loadStudents();
 
     } catch (err) {
-        showBanner('Erro na comunicação com o servidor.', 'danger');
+        showBanner('Erro na comunicaÃ§Ã£o com o servidor.', 'danger');
     }
 }
 
 // ========================================================================
-// RESPONSÁVEL — dependentes (RF009)
+// RESPONSÃVEL â€” dependentes (RF009)
 // ========================================================================
 
 async function loadGuardianStudents() {
@@ -419,7 +419,7 @@ async function loadGuardianStudents() {
 
         const students = await response.json();
         if (students.length === 0) {
-            grid.innerHTML = '<p>Nenhum aluno vinculado à sua conta familiar. Entre em contato com a coordenação escolar.</p>';
+            grid.innerHTML = '<p>Nenhum aluno vinculado Ã  sua conta familiar. Entre em contato com a coordenaÃ§Ã£o escolar.</p>';
             return;
         }
 
@@ -430,13 +430,13 @@ async function loadGuardianStudents() {
                     Turma: <strong>${escapeHtml(s.className)}</strong> | Nascimento: ${formatDate(s.birthDate)}
                 </div>
                 <div>
-                    Situação Escolar: ${s.active
+                    SituaÃ§Ã£o Escolar: ${s.active
                         ? '<span class="badge badge-active">Ativo</span>'
                         : '<span class="badge badge-inactive">Inativo</span>'}
                 </div>
                 <div style="margin-top:0.75rem;">
                     <button class="btn btn-outline btn-sm" onclick="loadGuardianStudentPickups(${s.id}, '${escapeHtml(s.fullName)}')">
-                        🔒 Ver Pessoas Autorizadas
+                        ðŸ”’ Ver Pessoas Autorizadas
                     </button>
                 </div>
                 <div id="guardian-pickups-${s.id}" class="d-none" style="margin-top:0.75rem;"></div>
@@ -459,7 +459,7 @@ async function loadGuardianStudentPickups(studentId, studentName) {
     }
 
     container.classList.remove('d-none');
-    container.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted)">Carregando autorizações...</p>';
+    container.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted)">Carregando autorizaÃ§Ãµes...</p>';
 
     try {
         const response = await fetch(`/api/guardian/students/${studentId}/pickups`, {
@@ -468,7 +468,7 @@ async function loadGuardianStudentPickups(studentId, studentName) {
 
         if (!response.ok) {
             const data = await response.json();
-            container.innerHTML = `<p style="color:var(--danger);font-size:0.8rem">${escapeHtml(data.message || 'Erro ao carregar autorizações.')}</p>`;
+            container.innerHTML = `<p style="color:var(--danger);font-size:0.8rem">${escapeHtml(data.message || 'Erro ao carregar autorizaÃ§Ãµes.')}</p>`;
             return;
         }
 
@@ -494,7 +494,7 @@ async function loadGuardianStudentPickups(studentId, studentName) {
 }
 
 // ========================================================================
-// AUTORIZAÇÕES DE RETIRADA — Fase 3 (RF005 / RS002 / RF007)
+// AUTORIZAÃ‡Ã•ES DE RETIRADA â€” Fase 3 (RF005 / RS002 / RF007)
 // ========================================================================
 
 // Popula todos os selects de aluno no dashboard
@@ -519,12 +519,12 @@ async function populateStudentSelects() {
             if (!el) return;
             const hasAll = id === 'exit-filter-student';
             el.innerHTML = hasAll
-                ? '<option value="">Todas as Saídas</option>'
+                ? '<option value="">Todas as SaÃ­das</option>'
                 : `<option value="">Selecione o aluno...</option>`;
             students.forEach(s => {
                 const opt = document.createElement('option');
                 opt.value = s.id;
-                opt.textContent = `${s.fullName} — ${s.className}`;
+                opt.textContent = `${s.fullName} â€” ${s.className}`;
                 el.appendChild(opt);
             });
         });
@@ -569,11 +569,11 @@ async function savePickup(event) {
 
         const data = await response.json();
         if (!response.ok) {
-            showBanner(data.message || 'Erro ao salvar autorização.', 'danger');
+            showBanner(data.message || 'Erro ao salvar autorizaÃ§Ã£o.', 'danger');
             return;
         }
 
-        showBanner(`Autorização para "${data.fullName}" cadastrada com sucesso!`, 'success');
+        showBanner(`AutorizaÃ§Ã£o para "${data.fullName}" cadastrada com sucesso!`, 'success');
         togglePickupForm();
         // Recarrega a tabela se o aluno selecionado no filtro for o mesmo
         const filterStudent = document.getElementById('pickup-filter-student')?.value;
@@ -582,7 +582,7 @@ async function savePickup(event) {
         }
 
     } catch (err) {
-        showBanner('Erro na comunicação com o servidor.', 'danger');
+        showBanner('Erro na comunicaÃ§Ã£o com o servidor.', 'danger');
     }
 }
 
@@ -593,12 +593,12 @@ async function loadPickupsForSelectedStudent() {
     if (!tbody) return;
 
     if (!studentId) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Selecione um aluno acima para visualizar suas autorizações.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Selecione um aluno acima para visualizar suas autorizaÃ§Ãµes.</td></tr>';
         if (auditPanel) auditPanel.classList.add('d-none');
         return;
     }
 
-    tbody.innerHTML = '<tr><td colspan="7" class="text-center">Carregando autorizações...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center">Carregando autorizaÃ§Ãµes...</td></tr>';
 
     try {
         const response = await fetch(`/api/admin/authorizations/students/${studentId}/pickups`, {
@@ -643,19 +643,19 @@ async function loadPickupsForSelectedStudent() {
         loadAuditLog(studentId);
 
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="color:var(--danger)">Erro na conexão com o servidor.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="color:var(--danger)">Erro na conexÃ£o com o servidor.</td></tr>`;
     }
 }
 
 function pickupStatusBadge(status) {
-    const labels = { VALIDA: 'VÁLIDA', REVOGADA: 'REVOGADA', VENCIDA: 'VENCIDA' };
+    const labels = { VALIDA: 'VÃLIDA', REVOGADA: 'REVOGADA', VENCIDA: 'VENCIDA' };
     const classes = { VALIDA: 'badge-active', REVOGADA: 'badge-inactive', VENCIDA: 'badge-warning' };
     const label = labels[status] || status;
     const cls = classes[status] || '';
     return `<span class="badge ${cls}">${label}</span>`;
 }
 
-// Modal de alteração de status da autorização
+// Modal de alteraÃ§Ã£o de status da autorizaÃ§Ã£o
 function openPickupStatusModal(pickupId, newStatus, pickupName) {
     document.getElementById('modal-pickup-id').value = pickupId;
     document.getElementById('modal-new-status').value = newStatus;
@@ -663,9 +663,9 @@ function openPickupStatusModal(pickupId, newStatus, pickupName) {
 
     const actionLabel = newStatus === 'REVOGADA' ? 'Revogar' : 'Revalidar';
     const colorClass = newStatus === 'REVOGADA' ? 'style="color:var(--danger)"' : '';
-    document.getElementById('modal-status-title').innerHTML = `${actionLabel} Autorização`;
+    document.getElementById('modal-status-title').innerHTML = `${actionLabel} AutorizaÃ§Ã£o`;
     document.getElementById('modal-status-desc').innerHTML =
-        `Você está prestes a <strong ${colorClass}>${actionLabel.toLowerCase()}</strong> a autorização de <strong>${escapeHtml(pickupName)}</strong>. Informe o motivo.`;
+        `VocÃª estÃ¡ prestes a <strong ${colorClass}>${actionLabel.toLowerCase()}</strong> a autorizaÃ§Ã£o de <strong>${escapeHtml(pickupName)}</strong>. Informe o motivo.`;
 
     document.getElementById('modal-pickup-status').classList.remove('d-none');
 }
@@ -689,21 +689,21 @@ async function submitPickupStatusChange(event) {
 
         const data = await response.json();
         if (!response.ok) {
-            showBanner(data.message || 'Erro ao alterar status da autorização.', 'danger');
+            showBanner(data.message || 'Erro ao alterar status da autorizaÃ§Ã£o.', 'danger');
             return;
         }
 
-        showBanner(`Situação da autorização atualizada para ${data.status === 'VALIDA' ? 'VÁLIDA' : data.status} com sucesso.`, 'success');
+        showBanner(`SituaÃ§Ã£o da autorizaÃ§Ã£o atualizada para ${data.status === 'VALIDA' ? 'VÃLIDA' : data.status} com sucesso.`, 'success');
         closePickupStatusModal();
         loadPickupsForSelectedStudent();
 
     } catch (err) {
-        showBanner('Erro na comunicação com o servidor.', 'danger');
+        showBanner('Erro na comunicaÃ§Ã£o com o servidor.', 'danger');
     }
 }
 
 // ========================================================================
-// TRILHA DE AUDITORIA — Fase 3 (RF007 / RS004)
+// TRILHA DE AUDITORIA â€” Fase 3 (RF007 / RS004)
 // ========================================================================
 
 async function loadAuditLog(studentId) {
@@ -731,8 +731,8 @@ async function loadAuditLog(studentId) {
         }
 
         tbody.innerHTML = logs.map(log => {
-            const prevStatus = log.previousStatus ? pickupStatusBadge(log.previousStatus) : '<span style="color:var(--text-muted)">—</span>';
-            const newStatus = log.newStatus ? pickupStatusBadge(log.newStatus) : '<span style="color:var(--text-muted)">—</span>';
+            const prevStatus = log.previousStatus ? pickupStatusBadge(log.previousStatus) : '<span style="color:var(--text-muted)">â€”</span>';
+            const newStatus = log.newStatus ? pickupStatusBadge(log.newStatus) : '<span style="color:var(--text-muted)">â€”</span>';
             return `
                 <tr>
                     <td style="white-space:nowrap">${formatDateTime(log.createdAt)}</td>
@@ -746,7 +746,7 @@ async function loadAuditLog(studentId) {
         }).join('');
 
     } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color:var(--danger)">Erro na conexão com o servidor.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="color:var(--danger)">Erro na conexÃ£o com o servidor.</td></tr>';
     }
 }
 
@@ -756,7 +756,7 @@ function closeAuditPanel() {
 }
 
 // ========================================================================
-// SAÍDAS ANTECIPADAS — Fase 3 (RF006 / RS002)
+// SAÃDAS ANTECIPADAS â€” Fase 3 (RF006 / RS002)
 // ========================================================================
 
 function toggleEarlyExitForm() {
@@ -773,7 +773,7 @@ function toggleEarlyExitForm() {
     }
 }
 
-// Carrega as autorizações VÁLIDAS do aluno selecionado no formulário de saída
+// Carrega as autorizaÃ§Ãµes VÃLIDAS do aluno selecionado no formulÃ¡rio de saÃ­da
 async function loadPickupsForEarlyExit() {
     const studentId = document.getElementById('exit-student-select')?.value;
     const pickupSelect = document.getElementById('exit-pickup-select');
@@ -794,16 +794,16 @@ async function loadPickupsForEarlyExit() {
         });
 
         if (!response.ok) {
-            pickupSelect.innerHTML = '<option value="">Erro ao carregar autorizações.</option>';
+            pickupSelect.innerHTML = '<option value="">Erro ao carregar autorizaÃ§Ãµes.</option>';
             return;
         }
 
         const allPickups = await response.json();
-        // Filtra apenas VÁLIDAS (RS002 — mas o backend também valida)
+        // Filtra apenas VÃLIDAS (RS002 â€” mas o backend tambÃ©m valida)
         const validPickups = allPickups.filter(p => p.status === 'VALIDA');
 
         if (validPickups.length === 0) {
-            pickupSelect.innerHTML = '<option value="">Nenhuma autorização VÁLIDA cadastrada para este aluno.</option>';
+            pickupSelect.innerHTML = '<option value="">Nenhuma autorizaÃ§Ã£o VÃLIDA cadastrada para este aluno.</option>';
             return;
         }
 
@@ -811,7 +811,7 @@ async function loadPickupsForEarlyExit() {
         validPickups.forEach(p => {
             const opt = document.createElement('option');
             opt.value = p.id;
-            opt.textContent = `${p.fullName} (${p.relationship}) — VÁLIDA até ${formatDate(p.validUntil)}`;
+            opt.textContent = `${p.fullName} (${p.relationship}) â€” VÃLIDA atÃ© ${formatDate(p.validUntil)}`;
             pickupSelect.appendChild(opt);
         });
 
@@ -849,16 +849,16 @@ async function saveEarlyExit(event) {
         const data = await response.json();
         if (!response.ok) {
             // Exibe mensagem de bloqueio RS002 com destaque
-            showBanner(data.message || 'Saída antecipada não autorizada.', 'danger');
+            showBanner(data.message || 'SaÃ­da antecipada nÃ£o autorizada.', 'danger');
             return;
         }
 
-        showBanner(`Saída antecipada de "${data.studentName}" registrada com sucesso.`, 'success');
+        showBanner(`SaÃ­da antecipada de "${data.studentName}" registrada com sucesso.`, 'success');
         toggleEarlyExitForm();
         loadEarlyExits();
 
     } catch (err) {
-        showBanner('Erro na comunicação com o servidor.', 'danger');
+        showBanner('Erro na comunicaÃ§Ã£o com o servidor.', 'danger');
     }
 }
 
@@ -869,7 +869,7 @@ async function loadEarlyExits() {
     const studentId = document.getElementById('exit-filter-student')?.value || '';
     const params = studentId ? `?studentId=${studentId}` : '';
 
-    tbody.innerHTML = '<tr><td colspan="7" class="text-center">Carregando saídas antecipadas...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center">Carregando saÃ­das antecipadas...</td></tr>';
 
     try {
         const response = await fetch(`/api/admin/authorizations/early-exits${params}`, {
@@ -877,13 +877,13 @@ async function loadEarlyExits() {
         });
 
         if (!response.ok) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="color:var(--danger)">Erro ao carregar saídas (HTTP ${response.status}).</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="color:var(--danger)">Erro ao carregar saÃ­das (HTTP ${response.status}).</td></tr>`;
             return;
         }
 
         const exits = await response.json();
         if (exits.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="color:var(--text-muted)">Nenhuma saída antecipada registrada.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="color:var(--text-muted)">Nenhuma saÃ­da antecipada registrada.</td></tr>';
             return;
         }
 
@@ -900,12 +900,12 @@ async function loadEarlyExits() {
         `).join('');
 
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="color:var(--danger)">Erro na conexão com o servidor.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="color:var(--danger)">Erro na conexÃ£o com o servidor.</td></tr>`;
     }
 }
 
 // ========================================================================
-// RBAC TEST — testes das rotas protegidas
+// RBAC TEST â€” testes das rotas protegidas
 // ========================================================================
 
 async function testAccess(url) {
@@ -916,7 +916,7 @@ async function testAccess(url) {
     if (!outputBox || !outputContent) return;
 
     outputBox.classList.remove('d-none');
-    outputContent.textContent = 'Testando requisição...';
+    outputContent.textContent = 'Testando requisiÃ§Ã£o...';
 
     try {
         const response = await fetch(url, {
@@ -925,16 +925,104 @@ async function testAccess(url) {
         const data = await response.json();
         outputContent.textContent = `HTTP ${response.status} ${response.statusText}\n` + JSON.stringify(data, null, 2);
     } catch (err) {
-        outputContent.textContent = 'Erro ao realizar a requisição: ' + err.message;
+        outputContent.textContent = 'Erro ao realizar a requisiÃ§Ã£o: ' + err.message;
     }
 }
 
 // ========================================================================
-// AUTH — logout
+// AUTH â€” logout
 // ========================================================================
 
 function logout() {
     localStorage.removeItem('sse_token');
     localStorage.removeItem('sse_user');
     window.location.href = '/index.html';
+}
+
+
+function toggleDeviceForm() {
+    const card = document.getElementById('device-form-card');
+    if (card) card.classList.toggle('d-none');
+}
+
+async function saveDevice(e) {
+    e.preventDefault();
+    const payload = {
+        name: document.getElementById('device-name').value.trim(),
+        deviceType: document.getElementById('device-type').value,
+        location: document.getElementById('device-location').value.trim()
+    };
+    try {
+        const response = await fetch('/api/admin/devices', { method: 'POST', headers: authHeader(), body: JSON.stringify(payload) });
+        const data = await response.json();
+        if (!response.ok) { showBanner(data.message || 'Erro ao cadastrar dispositivo.', 'danger'); return; }
+        document.getElementById('device-form').reset();
+        toggleDeviceForm();
+        const tokenBox = document.getElementById('new-device-token-box');
+        const tokenVal = document.getElementById('new-device-token-value');
+        const simTokenInput = document.getElementById('sim-device-token');
+        if (tokenBox && tokenVal) { tokenVal.textContent = data.plainToken; tokenBox.classList.remove('d-none'); }
+        if (simTokenInput) { simTokenInput.value = data.plainToken; }
+        showBanner('Dispositivo cadastrado com sucesso!', 'success');
+        loadDevices();
+    } catch (err) { showBanner('Erro ao registrar dispositivo.', 'danger'); }
+}
+
+async function loadDevices() {
+    const tbody = document.getElementById('devices-table-body');
+    if (!tbody) return;
+    try {
+        const response = await fetch('/api/admin/devices', { headers: authHeader() });
+        if (!response.ok) return;
+        const devices = await response.json();
+        if (devices.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhum dispositivo cadastrado.</td></tr>'; return; }
+        tbody.innerHTML = devices.map(d => `<tr><td>${d.id}</td><td><strong>${escapeHtml(d.name)}</strong></td><td>${escapeHtml(d.deviceType)}</td><td>${escapeHtml(d.location)}</td><td><span class="badge ${d.active ? 'badge-active' : 'badge-inactive'}">${d.active ? 'Ativo' : 'Inativo'}</span></td><td><button class="btn btn-outline btn-sm" onclick="toggleDeviceStatus(${d.id}, ${!d.active})">${d.active ? 'Desativar' : 'Ativar'}</button></td></tr>`).join('');
+    } catch (err) { console.error(err); }
+}
+
+async function toggleDeviceStatus(deviceId, newStatus) {
+    try {
+        const response = await fetch(`/api/admin/devices/${deviceId}/status`, { method: 'PATCH', headers: authHeader(), body: JSON.stringify({ active: newStatus }) });
+        if (response.ok) { showBanner('Status atualizado.', 'success'); loadDevices(); }
+    } catch (err) { showBanner('Erro ao atualizar status.', 'danger'); }
+}
+
+async function simulateTurnstileScan(e) {
+    e.preventDefault();
+    const deviceToken = document.getElementById('sim-device-token').value.trim();
+    const identifier = document.getElementById('sim-badge-code').value.trim();
+    const direction = document.getElementById('sim-direction').value;
+    const feedback = document.getElementById('sim-feedback');
+    try {
+        const response = await fetch('/api/devices/access', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Device-Token': deviceToken }, body: JSON.stringify({ identifier, direction }) });
+        const data = await response.json();
+        feedback.classList.remove('d-none', 'alert-success', 'alert-danger');
+        if (response.ok && data.status === 'AUTORIZADO') {
+            feedback.classList.add('alert-success');
+            feedback.textContent = `AUTORIZADO: ${data.studentName} (${data.className || '-'}) — ${data.direction} registrada na ${data.deviceName}.`;
+        } else {
+            feedback.classList.add('alert-danger');
+            feedback.textContent = `NEGADO: ${data.denialReason || data.message || 'Token inválido ou acesso bloqueado.'}`;
+        }
+        loadAccessLogs();
+    } catch (err) {
+        feedback.classList.remove('d-none', 'alert-success');
+        feedback.classList.add('alert-danger');
+        feedback.textContent = 'Erro de conexão com a catraca.';
+    }
+}
+
+async function loadAccessLogs() {
+    const tbody = document.getElementById('access-logs-table-body');
+    if (!tbody) return;
+    try {
+        const response = await fetch('/api/admin/devices/access-logs', { headers: authHeader() });
+        if (!response.ok) return;
+        const logs = await response.json();
+        if (logs.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum registro ainda.</td></tr>'; return; }
+        tbody.innerHTML = logs.map(log => {
+            const isAuth = log.status === 'AUTORIZADO';
+            return `<tr><td style="white-space:nowrap">${formatDateTime(log.recordedAt)}</td><td><strong>${escapeHtml(log.studentName)}</strong></td><td>${escapeHtml(log.className || '-')}</td><td>${escapeHtml(log.deviceName)}</td><td>${escapeHtml(log.direction)}</td><td><span class="badge ${isAuth ? 'badge-active' : 'badge-inactive'}">${escapeHtml(log.status)}</span></td><td>${escapeHtml(log.denialReason || 'Acesso liberado normalmente')}</td></tr>`;
+        }).join('');
+    } catch (err) { console.error(err); }
 }

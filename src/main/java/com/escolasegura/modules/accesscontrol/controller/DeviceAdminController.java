@@ -1,5 +1,6 @@
 package com.escolasegura.modules.accesscontrol.controller;
 
+import com.escolasegura.modules.accesscontrol.dto.AccessEventResponse;
 import com.escolasegura.modules.accesscontrol.dto.DeviceCreateRequest;
 import com.escolasegura.modules.accesscontrol.dto.DeviceResponse;
 import com.escolasegura.modules.accesscontrol.service.AccessControlService;
@@ -29,6 +30,11 @@ public class DeviceAdminController {
     @GetMapping
     public ResponseEntity<List<DeviceResponse>> listDevices() {
         return ResponseEntity.ok(accessControlService.listDevices());
+    }
+
+    @GetMapping("/access-logs")
+    public ResponseEntity<List<AccessEventResponse>> listRecentAccessLogs() {
+        return ResponseEntity.ok(accessControlService.listRecentAccessLogs());
     }
 
     @PatchMapping("/{id}/status")

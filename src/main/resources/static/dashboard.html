@@ -314,6 +314,131 @@
                 </div>
             </section>
 
+            <!-- ================================================= -->
+            <!-- SEÇÃO: CONTROLE DE ACESSO E CATRACAS (RF003/RF004)-->
+            <!-- ================================================= -->
+            <section id="admin-access-control-section" class="panel-section d-none">
+                <div class="section-header">
+                    <div>
+                        <h2>Controle de Acesso e Catracas IoT (RF003 / RF004 / RS006)</h2>
+                        <p class="section-subtitle">Gerencie dispositivos da portaria, simule leituras RFID e acompanhe entradas/saídas ao vivo.</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="toggleDeviceForm()">+ Novo Dispositivo</button>
+                </div>
+
+                <!-- Formulário de Cadastro de Dispositivo IoT -->
+                <div id="device-form-card" class="card form-card d-none">
+                    <h3>Cadastrar Dispositivo de Portaria</h3>
+                    <form id="device-form" onsubmit="saveDevice(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="device-name">Nome do Dispositivo *</label>
+                                <input type="text" id="device-name" required placeholder="Ex: Catraca Portaria Principal">
+                            </div>
+                            <div class="form-group">
+                                <label for="device-type">Tipo *</label>
+                                <select id="device-type" required>
+                                    <option value="CATRACA">Catraca Eletrônica</option>
+                                    <option value="LEITOR_RFID">Leitor RFID / Crachá</option>
+                                    <option value="PORTARIA_MANUAL">Terminal Portaria Manual</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="device-location">Localização *</label>
+                                <input type="text" id="device-location" required placeholder="Ex: Entrada Bloco A">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-sm">Gerar Token e Cadastrar</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="toggleDeviceForm()">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Banner de Token Recém-Gerado -->
+                <div id="new-device-token-box" class="card d-none" style="border-left: 4px solid #16a34a; background: #f0fdf4; margin-bottom: 1rem;">
+                    <strong>Dispositivo registrado com sucesso!</strong>
+                    <p style="margin: 0.4rem 0; font-size: 0.9rem;">Copie o token abaixo agora (por segurança, ele não será exibido novamente após recarregar a página):</p>
+                    <code id="new-device-token-value" style="display: block; padding: 0.6rem; background: #fff; border: 1px solid #bbf7d0; border-radius: 6px; font-weight: bold;"></code>
+                </div>
+
+                <!-- Simulador Visual de Catraca RFID -->
+                <div class="card" style="margin-bottom: 1.5rem; border: 1px solid #cbd5e1;">
+                    <h3>Simulador de Leitura na Catraca (Teste ao Vivo)</h3>
+                    <p class="section-subtitle">Simule a passagem de um crachá RFID sem precisar usar o terminal.</p>
+                    <form id="turnstile-sim-form" onsubmit="simulateTurnstileScan(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="sim-device-token">Token do Dispositivo (`X-Device-Token`) *</label>
+                                <input type="text" id="sim-device-token" required placeholder="Cole o dev_... gerado ao cadastrar a catraca">
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-badge-code">Código do Crachá / RFID *</label>
+                                <input type="text" id="sim-badge-code" required placeholder="Ex: RFID-1001 ou RFID-2002">
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-direction">Direção *</label>
+                                <select id="sim-direction" required>
+                                    <option value="ENTRADA">ENTRADA</option>
+                                    <option value="SAIDA">SAÍDA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-sm">Passar Crachá na Catraca</button>
+                        </div>
+                    </form>
+                    <div id="sim-feedback" class="alert d-none" style="margin-top: 1rem;"></div>
+                </div>
+
+                <!-- Lista de Dispositivos Cadastrados -->
+                <h3 style="margin-bottom: 0.5rem;">Dispositivos Cadastrados</h3>
+                <div class="table-responsive" style="margin-bottom: 1.5rem;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Tipo</th>
+                                <th>Localização</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="devices-table-body">
+                            <tr><td colspan="6" class="text-center">Carregando dispositivos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Monitor de Entradas e Saídas em Tempo Real -->
+                <div class="section-header">
+                    <div>
+                        <h3>Monitor de Acessos em Tempo Real</h3>
+                        <p class="section-subtitle">Atualiza automaticamente a cada 5 segundos.</p>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="loadAccessLogs()">Atualizar Agora</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Aluno</th>
+                                <th>Turma</th>
+                                <th>Dispositivo</th>
+                                <th>Direção</th>
+                                <th>Resultado</th>
+                                <th>Observação / Motivo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="access-logs-table-body">
+                            <tr><td colspan="7" class="text-center">Carregando registros de acesso...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <!-- SEÇÃO DE TESTES DE RBAC -->
             <section class="panel-section">
                 <h2>Teste de Políticas de Autorização (RBAC)</h2>
