@@ -596,40 +596,8 @@
             </section>
 
             <!-- SEÇÃO DE TESTES DE RBAC -->
-            <section class="panel-section">
-                <h2>Teste de Políticas de Autorização (RBAC)</h2>
-                <p class="section-subtitle">Verifique o comportamento do sistema testando o acesso às rotas protegidas pelo token JWT:</p>
-
-                <div class="test-cards-grid">
-                    <div class="test-card">
-                        <h3>Gestão Escolar</h3>
-                        <p>Restrito a Coordenadores e Supervisores.</p>
-                        <button class="btn btn-outline" onclick="testAccess('/api/test/coordinator')">Testar Rota</button>
-                    </div>
-
-                    <div class="test-card">
-                        <h3>Portal Familiar</h3>
-                        <p>Restrito aos Responsáveis pelos alunos.</p>
-                        <button class="btn btn-outline" onclick="testAccess('/api/test/guardian')">Testar Rota</button>
-                    </div>
-
-                    <div class="test-card">
-                        <h3>Área do Aluno</h3>
-                        <p>Restrito a contas de Alunos matriculados.</p>
-                        <button class="btn btn-outline" onclick="testAccess('/api/test/student')">Testar Rota</button>
-                    </div>
-                </div>
-
-                <div id="test-result" class="test-output d-none">
-                    <strong>Resposta do Servidor:</strong>
-                    <pre id="test-output-content"></pre>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- Modal para Vinculação de Responsável -->
-                <!-- ================================================= -->
+            
+<!-- ================================================= -->
             <!-- SEÇÃO: COMUNICADOS INSTITUCIONAIS (COORDENAÇÃO)   -->
             <!-- ================================================= -->
             <section id="admin-announcements-section" class="panel-section d-none">
@@ -727,7 +695,40 @@
                     <p>Carregando comunicados...</p>
                 </div>
             </section>
-<div id="modal-link-guardian" class="modal d-none">
+
+            <section class="panel-section">
+                <h2>Teste de Políticas de Autorização (RBAC)</h2>
+                <p class="section-subtitle">Verifique o comportamento do sistema testando o acesso às rotas protegidas pelo token JWT:</p>
+
+                <div class="test-cards-grid">
+                    <div class="test-card">
+                        <h3>Gestão Escolar</h3>
+                        <p>Restrito a Coordenadores e Supervisores.</p>
+                        <button class="btn btn-outline" onclick="testAccess('/api/test/coordinator')">Testar Rota</button>
+                    </div>
+
+                    <div class="test-card">
+                        <h3>Portal Familiar</h3>
+                        <p>Restrito aos Responsáveis pelos alunos.</p>
+                        <button class="btn btn-outline" onclick="testAccess('/api/test/guardian')">Testar Rota</button>
+                    </div>
+
+                    <div class="test-card">
+                        <h3>Área do Aluno</h3>
+                        <p>Restrito a contas de Alunos matriculados.</p>
+                        <button class="btn btn-outline" onclick="testAccess('/api/test/student')">Testar Rota</button>
+                    </div>
+                </div>
+
+                <div id="test-result" class="test-output d-none">
+                    <strong>Resposta do Servidor:</strong>
+                    <pre id="test-output-content"></pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Vinculação de Responsável --><div id="modal-link-guardian" class="modal d-none">
         <div class="modal-content">
             <h3>Vincular Responsável ao Aluno</h3>
             <p id="modal-student-name" class="modal-subtitle"></p>
