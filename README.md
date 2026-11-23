@@ -76,3 +76,10 @@ Sistema web full-stack para controle de acesso físico, gestão de matrículas e
 - `src/main/java/com/escolasegura/modules/notifications/` — Notificações para responsáveis e alertas de segurança
 - `src/main/java/com/escolasegura/modules/reports/` — Indicadores gerenciais em tempo real e exportação CSV
 - `src/main/java/com/escolasegura/modules/studentportal/` — Comunicados institucionais e portal do estudante
+---
+
+## Documentação de Engenharia de Software
+
+- [PRD — Documento de Requisitos do Produto](docs/PRD.md)
+- [ADR — Registros de Decisões Arquiteturais](docs/ADR.md)
+- [SPECS — Especificações Técnicas e Contratos de API](docs/SPECS.md)
