@@ -13,6 +13,7 @@ import com.escolasegura.modules.authorizations.model.PickupStatus;
 import com.escolasegura.modules.authorizations.repository.AuthorizedPickupRepository;
 import com.escolasegura.modules.authorizations.repository.EarlyExitRepository;
 import com.escolasegura.modules.authorizations.repository.PickupAuditLogRepository;
+import com.escolasegura.modules.notifications.service.NotificationAndAlertService;
 import com.escolasegura.modules.students.model.Student;
 import com.escolasegura.modules.students.repository.StudentGuardianRepository;
 import com.escolasegura.modules.students.repository.StudentRepository;
@@ -32,6 +33,7 @@ public class AuthorizationService {
     private final StudentRepository studentRepository;
     private final StudentGuardianRepository studentGuardianRepository;
     private final UserRepository userRepository;
+    private final NotificationAndAlertService notificationAndAlertService;
 
     public AuthorizationService(
             AuthorizedPickupRepository authorizedPickupRepository,
@@ -39,8 +41,10 @@ public class AuthorizationService {
             EarlyExitRepository earlyExitRepository,
             StudentRepository studentRepository,
             StudentGuardianRepository studentGuardianRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            NotificationAndAlertService notificationAndAlertService
     ) {
+        this.notificationAndAlertService = notificationAndAlertService;
         this.authorizedPickupRepository = authorizedPickupRepository;
         this.pickupAuditLogRepository = pickupAuditLogRepository;
         this.earlyExitRepository = earlyExitRepository;
@@ -174,6 +178,7 @@ public class AuthorizationService {
         );
 
         EarlyExit saved = earlyExitRepository.save(earlyExit);
+        notificationAndAlertService.notifyEarlyExit(student, pickup.getFullName(), pickup.getRelationship(), request.reason().trim());
         return EarlyExitResponse.fromEntity(saved);
     }
 

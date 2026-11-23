@@ -28,10 +28,136 @@
 
             <div id="alert-banner" class="alert d-none" role="alert"></div>
 
+                                    <!-- ================================================= -->
+            <!-- SEÇÃO: NOTIFICAÇÕES EM TEMPO REAL (RESPONSÁVEL)   -->
             <!-- ================================================= -->
+            <section id="guardian-notifications-section" class="panel-section d-none">
+                <div class="section-header">
+                    <div>
+                        <h2>
+                            Notificações de Acesso e Saídas
+                            <span id="guardian-unread-badge" class="badge badge-inactive" style="margin-left:0.5rem;">0 não lidas</span>
+                        </h2>
+                        <p class="section-subtitle">Avisos em tempo real sobre entrada, saída e liberações antecipadas dos seus dependentes.</p>
+                    </div>
+                    <div style="display:flex; gap:0.5rem;">
+                        <button class="btn btn-outline btn-sm" onclick="markAllNotificationsRead()">Marcar Todas como Lidas</button>
+                        <button class="btn btn-secondary btn-sm" onclick="loadGuardianNotifications()">Atualizar</button>
+                    </div>
+                </div>
+                <div id="guardian-notifications-list" class="cards-grid">
+                    <p>Carregando notificações...</p>
+                </div>
+            </section>
+<!-- ================================================= -->
+            <!-- SEÇÃO: CENTRAL DE ALERTAS DE SEGURANÇA (FASE 5)   -->
+            <!-- ================================================= -->
+            <section id="admin-alerts-section" class="panel-section d-none">
+                <div class="section-header">
+                    <div>
+                        <h2>Central de Alertas de Segurança (RF008 / RS007)</h2>
+                        <p class="section-subtitle">Monitoramento automático de tentativas de acesso negadas, crachás desconhecidos e anomalias na portaria.</p>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="loadSecurityAlerts()">Atualizar Alertas</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Severidade</th>
+                                <th>Categoria</th>
+                                <th>Aluno / Ponto</th>
+                                <th>Descrição do Evento</th>
+                                <th>Status</th>
+                                <th>Tratativa / Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="security-alerts-table-body">
+                            <tr><td colspan="7" class="text-center">Carregando alertas de segurança...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+<!-- ================================================= -->
             <!-- SEÇÃO: GESTÃO DE ALUNOS (COORDENADOR / SUPERVISOR) -->
             <!-- ================================================= -->
-            <section id="admin-students-section" class="panel-section d-none">
+                        <!-- ================================================= -->
+            <section id="admin-reports-section" class="panel-section d-none">
+                <div class="section-header">
+                    <div>
+                        <h2>Indicadores Gerenciais e Relatórios (RF007 / RS004)</h2>
+                        <p class="section-subtitle">Consolidado de presença escolar em tempo real, histórico filtrável e exportação CSV.</p>
+                    </div>
+                    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        <button type="button" class="btn btn-secondary" onclick="loadAdminReports()">Atualizar Dados</button>
+                        <button type="button" class="btn btn-primary" onclick="exportAccessReportCsv()">Exportar CSV</button>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:0.85rem; margin-bottom:1.25rem;">
+                    <div class="student-card" style="padding:0.9rem;">
+                        <small style="color:var(--text-muted)">Presentes na Escola Agora</small>
+                        <h3 id="metric-inside" style="margin:0.35rem 0 0; font-size:1.5rem; color:#16a34a;">0</h3>
+                    </div>
+                    <div class="student-card" style="padding:0.9rem;">
+                        <small style="color:var(--text-muted)">Alunos Ativos</small>
+                        <h3 id="metric-active-students" style="margin:0.35rem 0 0; font-size:1.5rem;">0</h3>
+                    </div>
+                    <div class="student-card" style="padding:0.9rem;">
+                        <small style="color:var(--text-muted)">Entradas Hoje</small>
+                        <h3 id="metric-today-entries" style="margin:0.35rem 0 0; font-size:1.5rem; color:#2563eb;">0</h3>
+                    </div>
+                    <div class="student-card" style="padding:0.9rem;">
+                        <small style="color:var(--text-muted)">Saídas Hoje</small>
+                        <h3 id="metric-today-exits" style="margin:0.35rem 0 0; font-size:1.5rem;">0</h3>
+                    </div>
+                    <div class="student-card" style="padding:0.9rem;">
+                        <small style="color:var(--text-muted)">Saídas Antecipadas</small>
+                        <h3 id="metric-early-exits" style="margin:0.35rem 0 0; font-size:1.5rem;">0</h3>
+                    </div>
+                    <div class="student-card" style="padding:0.9rem;">
+                        <small style="color:var(--text-muted)">Alertas Abertos</small>
+                        <h3 id="metric-open-alerts" style="margin:0.35rem 0 0; font-size:1.5rem; color:#dc2626;">0</h3>
+                    </div>
+                </div>
+
+                <div class="filter-bar" style="display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1rem;">
+                    <input type="text" id="report-filter-class" placeholder="Filtrar por turma (ex: 4º A)" class="form-control" style="max-width:220px;">
+                    <select id="report-filter-direction" class="form-control" style="max-width:180px;">
+                        <option value="">Todas as Direções</option>
+                        <option value="ENTRADA">ENTRADA</option>
+                        <option value="SAIDA">SAÍDA</option>
+                    </select>
+                    <select id="report-filter-status" class="form-control" style="max-width:190px;">
+                        <option value="">Todos os Status</option>
+                        <option value="AUTORIZADO">AUTORIZADO</option>
+                        <option value="NEGADO">NEGADO</option>
+                    </select>
+                    <button type="button" class="btn btn-secondary" onclick="loadAccessReportTable()">Filtrar Relatório</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Aluno</th>
+                                <th>Turma</th>
+                                <th>Crachá</th>
+                                <th>Dispositivo</th>
+                                <th>Direção</th>
+                                <th>Status</th>
+                                <th>Observação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-reports-tbody">
+                            <tr><td colspan="8" class="text-center">Carregando relatório...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+<section id="admin-students-section" class="panel-section d-none">
                 <div class="section-header">
                     <div>
                         <h2>Gestão de Alunos e Matrículas (RF002 / RS008)</h2>
@@ -118,7 +244,37 @@
                 </div>
             </section>
 
+                        <!-- ================================================= -->
+            <!-- SEÇÃO: CENTRAL DE ALERTAS DE SEGURANÇA (FASE 5)   -->
             <!-- ================================================= -->
+            <section id="admin-alerts-section" class="panel-section d-none">
+                <div class="section-header">
+                    <div>
+                        <h2>Central de Alertas de Segurança (RF008 / RS007)</h2>
+                        <p class="section-subtitle">Monitoramento automático de tentativas de acesso negadas, crachás desconhecidos e anomalias na portaria.</p>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="loadSecurityAlerts()">Atualizar Alertas</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Severidade</th>
+                                <th>Categoria</th>
+                                <th>Aluno / Ponto</th>
+                                <th>Descrição do Evento</th>
+                                <th>Status</th>
+                                <th>Tratativa / Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="security-alerts-table-body">
+                            <tr><td colspan="7" class="text-center">Carregando alertas de segurança...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+<!-- ================================================= -->
             <!-- SEÇÃO: PESSOAS AUTORIZADAS PARA RETIRADA (RF005)   -->
             <!-- ================================================= -->
             <section id="admin-pickups-section" class="panel-section d-none">
@@ -370,7 +526,7 @@
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="sim-device-token">Token do Dispositivo (`X-Device-Token`) *</label>
-                                <input type="text" id="sim-device-token" required placeholder="Cole o dev_... gerado ao cadastrar a catraca">
+                                <input type="text" id="sim-device-token" required placeholder="Cole o token dev_... da catraca">
                             </div>
                             <div class="form-group">
                                 <label for="sim-badge-code">Código do Crachá / RFID *</label>
@@ -473,7 +629,105 @@
     </div>
 
     <!-- Modal para Vinculação de Responsável -->
-    <div id="modal-link-guardian" class="modal d-none">
+                <!-- ================================================= -->
+            <!-- SEÇÃO: COMUNICADOS INSTITUCIONAIS (COORDENAÇÃO)   -->
+            <!-- ================================================= -->
+            <section id="admin-announcements-section" class="panel-section d-none">
+                <div class="section-header">
+                    <div>
+                        <h2>Comunicados Escolares Institucionais (RF010)</h2>
+                        <p class="section-subtitle">Publique avisos oficiais para alunos e responsáveis.</p>
+                    </div>
+                </div>
+
+                <div class="card form-card" style="margin-bottom:1.25rem;">
+                    <h3>Novo Comunicado Oficial</h3>
+                    <form id="announcement-form" onsubmit="createSchoolAnnouncement(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="ann-title">Título do Comunicado *</label>
+                                <input type="text" id="ann-title" required maxlength="150" placeholder="Ex: Horário especial de provas">
+                            </div>
+                            <div class="form-group">
+                                <label for="ann-category">Categoria</label>
+                                <select id="ann-category">
+                                    <option value="GERAL">GERAL</option>
+                                    <option value="SEGURANCA">SEGURANÇA</option>
+                                    <option value="EVENTO">EVENTO</option>
+                                    <option value="ACADEMICO">ACADÊMICO</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-group-full">
+                                <label for="ann-content">Mensagem *</label>
+                                <textarea id="ann-content" rows="3" required placeholder="Escreva o conteúdo completo do comunicado..." style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:6px; font-family:inherit;"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-sm">Publicar Comunicado</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="admin-announcements-list" class="cards-grid">
+                    <p>Carregando comunicados...</p>
+                </div>
+            </section>
+
+            <!-- ================================================= -->
+            <!-- SEÇÃO: COMUNICADOS ESCOLARES (RESPONSÁVEL)        -->
+            <!-- ================================================= -->
+            <section id="guardian-announcements-section" class="panel-section d-none">
+                <div class="section-header">
+                    <div>
+                        <h2>Mural de Comunicados da Escola (RF010)</h2>
+                        <p class="section-subtitle">Avisos oficiais publicados pela Coordenação e Secretaria.</p>
+                    </div>
+                </div>
+                <div id="guardian-announcements-list" class="cards-grid">
+                    <p>Carregando comunicados...</p>
+                </div>
+            </section>
+
+            <!-- ================================================= -->
+            <!-- SEÇÃO: PORTAL DO ALUNO COMPLETO (PERFIL ALUNO)    -->
+            <!-- ================================================= -->
+            <section id="student-portal-section" class="panel-section d-none">
+                <div class="section-header">
+                    <div>
+                        <h2>Meu Portal Escolar (RF010)</h2>
+                        <p class="section-subtitle">Consulte seus dados de matrícula, crachá de acesso, histórico de portaria e avisos da escola.</p>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="loadStudentPortal()">Atualizar Portal</button>
+                </div>
+
+                <div id="student-profile-card" class="student-card" style="margin-bottom:1.25rem;">
+                    <p>Carregando dados do aluno...</p>
+                </div>
+
+                <h3 style="margin:1rem 0 0.65rem;">Meus Registros de Entrada e Saída</h3>
+                <div class="table-responsive" style="margin-bottom:1.5rem;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Direção</th>
+                                <th>Status</th>
+                                <th>Ponto / Catraca</th>
+                                <th>Observação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-own-logs-tbody">
+                            <tr><td colspan="5" class="text-center">Carregando seu histórico de acessos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="margin:1rem 0 0.65rem;">Comunicados da Escola</h3>
+                <div id="student-announcements-list" class="cards-grid">
+                    <p>Carregando comunicados...</p>
+                </div>
+            </section>
+<div id="modal-link-guardian" class="modal d-none">
         <div class="modal-content">
             <h3>Vincular Responsável ao Aluno</h3>
             <p id="modal-student-name" class="modal-subtitle"></p>

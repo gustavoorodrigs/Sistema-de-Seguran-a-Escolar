@@ -5,6 +5,7 @@ import com.escolasegura.modules.accesscontrol.dto.AccessEventResponse;
 import com.escolasegura.modules.accesscontrol.model.*;
 import com.escolasegura.modules.accesscontrol.repository.AccessLogRepository;
 import com.escolasegura.modules.accesscontrol.repository.DeviceRepository;
+import com.escolasegura.modules.notifications.service.NotificationAndAlertService;
 import com.escolasegura.modules.students.model.Student;
 import com.escolasegura.modules.students.repository.StudentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +34,7 @@ class AccessControlServiceTest {
 
     @Mock
     private StudentRepository studentRepository;
+    @Mock private NotificationAndAlertService notificationAndAlertService;
 
     private AccessControlService accessControlService;
 
@@ -45,7 +47,7 @@ class AccessControlServiceTest {
                 deviceRepository,
                 accessLogRepository,
                 studentRepository,
-                new DeviceTokenService()
+                new DeviceTokenService(), notificationAndAlertService
         );
 
         activeDevice = new Device("Catraca Principal", DeviceType.CATRACA, "Portaria A", "hash123", true);

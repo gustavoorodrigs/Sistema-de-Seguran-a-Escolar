@@ -6,6 +6,8 @@ import com.escolasegura.modules.accesscontrol.dto.*;
 import com.escolasegura.modules.accesscontrol.model.*;
 import com.escolasegura.modules.accesscontrol.repository.AccessLogRepository;
 import com.escolasegura.modules.accesscontrol.repository.DeviceRepository;
+import com.escolasegura.modules.notifications.model.AlertSeverity;
+import com.escolasegura.modules.notifications.service.NotificationAndAlertService;
 import com.escolasegura.modules.students.model.Student;
 import com.escolasegura.modules.students.repository.StudentRepository;
 import org.springframework.stereotype.Service;
@@ -24,17 +26,20 @@ public class AccessControlService {
     private final AccessLogRepository accessLogRepository;
     private final StudentRepository studentRepository;
     private final DeviceTokenService deviceTokenService;
+    private final NotificationAndAlertService notificationAndAlertService;
 
     public AccessControlService(
             DeviceRepository deviceRepository,
             AccessLogRepository accessLogRepository,
             StudentRepository studentRepository,
-            DeviceTokenService deviceTokenService
+            DeviceTokenService deviceTokenService,
+            NotificationAndAlertService notificationAndAlertService
     ) {
         this.deviceRepository = deviceRepository;
         this.accessLogRepository = accessLogRepository;
         this.studentRepository = studentRepository;
         this.deviceTokenService = deviceTokenService;
+        this.notificationAndAlertService = notificationAndAlertService;
     }
 
     @Transactional
@@ -70,7 +75,7 @@ public class AccessControlService {
     @Transactional
     public DeviceResponse updateDeviceStatus(Long deviceId, boolean active) {
         Device device = deviceRepository.findById(deviceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Dispositivo não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Dispositivo nÃ£o encontrado"));
         device.setActive(active);
         return DeviceResponse.fromEntity(deviceRepository.save(device), null);
     }
@@ -78,10 +83,10 @@ public class AccessControlService {
     @Transactional
     public AccessEventResponse processAccessEvent(Long authenticatedDeviceId, AccessEventRequest request) {
         Device device = deviceRepository.findById(authenticatedDeviceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Dispositivo autenticado não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Dispositivo authenticado nÃ£o encontrado"));
 
         if (!device.isActive()) {
-            throw new BusinessRuleException("Dispositivo está inativo e não pode registrar acessos");
+            throw new BusinessRuleException("Dispositivo estÃ¡ inativo e nÃ£o pode registrar acessos");
         }
 
         String normalizedIdentifier = request.identifier().trim();
@@ -90,14 +95,22 @@ public class AccessControlService {
         Optional<Student> studentOpt = studentRepository.findByBadgeCode(normalizedIdentifier);
 
         if (studentOpt.isEmpty()) {
+            String reason = "Identificador/crachÃ¡ nÃ£o cadastrado no sistema";
             AccessLog deniedLog = new AccessLog(
                     null,
                     device,
                     request.direction(),
                     ValidationStatus.NEGADO,
-                    "Identificador/crachá não cadastrado no sistema",
+                    reason,
                     normalizedIdentifier,
                     eventTime
+            );
+            notificationAndAlertService.createSecurityAlert(
+                    null,
+                    device,
+                    AlertSeverity.ALTA,
+                    "CRACHA_DESCONHECIDO",
+                    "Tentativa de " + request.direction() + " com crachÃ¡ nÃ£o cadastrado (" + normalizedIdentifier + ") no ponto " + device.getName() + "."
             );
             return AccessEventResponse.fromEntity(accessLogRepository.save(deniedLog));
         }
@@ -105,14 +118,22 @@ public class AccessControlService {
         Student student = studentOpt.get();
 
         if (!student.isActive()) {
+            String reason = "Cadastro do aluno encontra-se inativo";
             AccessLog deniedLog = new AccessLog(
                     student,
                     device,
                     request.direction(),
                     ValidationStatus.NEGADO,
-                    "Cadastro do aluno encontra-se inativo",
+                    reason,
                     normalizedIdentifier,
                     eventTime
+            );
+            notificationAndAlertService.createSecurityAlert(
+                    student,
+                    device,
+                    AlertSeverity.ALTA,
+                    "ALUNO_INATIVO",
+                    "Tentativa de " + request.direction() + " bloqueada para aluno inativo (" + student.getFullName() + ") no ponto " + device.getName() + "."
             );
             return AccessEventResponse.fromEntity(accessLogRepository.save(deniedLog));
         }
@@ -126,14 +147,22 @@ public class AccessControlService {
                 );
 
         if (recentDuplicate.isPresent()) {
+            String reason = "Leitura duplicada detectada em intervalo inferior a " + DUPLICATE_WINDOW_SECONDS + "s";
             AccessLog duplicateLog = new AccessLog(
                     student,
                     device,
                     request.direction(),
                     ValidationStatus.NEGADO,
-                    "Leitura duplicada detectada em intervalo inferior a " + DUPLICATE_WINDOW_SECONDS + "s",
+                    reason,
                     normalizedIdentifier,
                     eventTime
+            );
+            notificationAndAlertService.createSecurityAlert(
+                    student,
+                    device,
+                    AlertSeverity.MEDIA,
+                    "LEITURA_DUPLICADA",
+                    "Leitura duplicada de " + request.direction() + " para " + student.getFullName() + " em menos de " + DUPLICATE_WINDOW_SECONDS + "s no ponto " + device.getName() + "."
             );
             return AccessEventResponse.fromEntity(accessLogRepository.save(duplicateLog));
         }
@@ -147,6 +176,11 @@ public class AccessControlService {
                 normalizedIdentifier,
                 eventTime
         );
-        return AccessEventResponse.fromEntity(accessLogRepository.save(authorizedLog));
+        AccessLog savedLog = accessLogRepository.save(authorizedLog);
+
+        notificationAndAlertService.notifyStudentAccess(student, device, request.direction(), eventTime);
+
+        return AccessEventResponse.fromEntity(savedLog);
     }
 }
+
